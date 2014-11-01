@@ -4,24 +4,32 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 
-\title{Digit Classification}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+
+\title{Handwritten Digit Classification}
 \author{Ian Forbes, Xinchi Chen, Niladri Mohanty}
 \begin{document}
 \twocolumn[
 \maketitle
 \section{abstract}
-We attempt to classify images of handwritten digits on textured backgrounds. Using a training set of 50000 images we evaluate the performance of several popular machine learning algorithms.
+We attempt to classify images of handwritten digits written on various textured backgrounds. Using a training set of 50000 images we evaluate the performance of several popular machine learning algorithms. 
 \\
 \\
 ]
 \section{Introduction}
-
-\section{Related Work}
 \section{Preprocessing}
+We tried many different preprocessing methods in attempt to reduce images noise, sharpen the appearance of the target digit, and most importantly improve our algorithms' accuracy. The first and most basic of theses methods was to normalize all of the images to a $[0,1]$ scale. The reason for this decision was that while browsing through the images we noticed that many were mostly gray with very little black or white. We believed that by normalizing the images there would be more contrast between the digit and the background which would make it easier to identify the digit.
 
+While normalization proved promising in validation, increasing our validation accuracy by roughly 1\%, our actual Kaggle submissions scored lower than the un-normalized submission.
+
+Another method we tried was image sharpening. Image sharpening works by subtracting a blurred copy of the image from a scaled version of the original image. In particular we tried subtracting 
 \section{Feature Selection}
 \section{Algorithms}
 \subsection{Naive Bayes}
+Naive Bayes is a basic machine learning algorithm based on Bayes rule that can be used for multiclass classification. It uses Bayes rule along with the assumption that all features are conditionally independent given the class. The decision rule for Bayes rule is given by:
+\[ \argmax_c \Pr(C = c) \prod_{i=0}^{n} \Pr(F_i = f_i | C = c)\]
+We used a variant of Naive Bayes called Multinomial Naive Bayes. This method creates a Multinomial probability distribution for each feature given the class. In technical terms we estimate the distribution $\Pr(F_i = f_i | C = c)$ over each features $f \in F$ and each class $ c \in C$ from our training data. Then we use the decision rule to find the class $c$ which maximizes this probability when classifying a test example.
 \subsection{Neural Network}
 \subsection{Support Vector Machine}
 \subsection{Convolutional Neural Network}
