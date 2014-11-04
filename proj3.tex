@@ -125,27 +125,8 @@ The main utility behind using GPUs is that they employ the use of thousands of l
 
 In stark contrast to CPU programming GPU programming rarely uses common programming constructs such as loops and conditionals. nVidia\textsuperscript{\textregistered}'s CUDA uses a system of threads, block, and grids to execute operations in parallel. In particular each block can be assigned a number threads to operate on it. Each block can be be a 1,2,or 3 dimensional matrix. Blocks are grouped together in grids. In order to manipulate the data  users apply a kernel to each grid. In order of apply a convolution to an image would be mapped to a single block. A grid would consist of a batch of images. In the context of our digit recognition problem we could assign $48 \times 48 = 2304$ threads to each block corresponding to 1 thread per pixel. The kernel (function) we would apply to each block would be a very basic function that computes the weighted sum of a given pixel and its neighbours based on the convolution kernel (image).
 \section{Discussion}
-\section{References}
-@MISC{Maji09fastand,
-    author = {Subhransu Maji and Jitendra Malik},
-    title = {Fast and Accurate Digit Classification},
-    year = {2009}
-}
-@inproceedings{larochelle2007empirical,
-  title={An empirical evaluation of deep architectures on problems with many factors of variation},
-  author={Larochelle, Hugo and Erhan, Dumitru and Courville, Aaron and Bergstra, James and Bengio, Yoshua},
-  booktitle={Proceedings of the 24th international conference on Machine learning},
-  pages={473--480},
-  year={2007},
-  organization={ACM}
-}
-@incollection{chen2006combining,
-  title={Combining SVMs with various feature selection strategies},
-  author={Chen, Yi-Wei and Lin, Chih-Jen},
-  booktitle={Feature extraction},
-  pages={315--324},
-  year={2006},
-  publisher={Springer}
-}
-\section{Appendix}
+\bibliographystyle{plain}
+\bibliography{biblio.bib}
+\section*{Appendix}
+
 \end{document}
