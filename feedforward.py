@@ -80,15 +80,12 @@ def sup(hi):
         
         #Phase I
         for j in range(hn): #1-10
-            o1[j]=0
-            for i in range(inode):
-                o1[j]=o1[j]+w_in_hide[i][j]*inputs[i]
+            o1[j] = np.inner(w_in_hide[i], inputs)
             sig1[j]=1/(1+np.exp(-o1[j]-threshold1[j]))
             
         #calculate the summation between 
-		o2=0
-        for i in range(hn):
-            o2=o2+w_hide_out[i]*sig1[i]
+	o2 = np.inner(w_hide_out, sig1)
+        
         sig2=1/(1+np.exp(-o2-threshold2))
             
 		#the adjust value is calculated by the (difference between estimated output and true output)*(derivative of sigmoid function)
@@ -99,7 +96,7 @@ def sup(hi):
     
         #back-propagate the adjust value to input layer and hidden layer
         for j in range(hn):
-			#new adjust value(named adjust2) between input layer and hidden layer
+	    #new adjust value(named adjust2) between input layer and hidden layer
             adjust2[j]=adjust1*w_hide_out[j]
             adjust2[j]=adjust2[j]*sig1[j]*(1-sig1[j])
             
@@ -108,9 +105,9 @@ def sup(hi):
                 w_in_hide[i][j]+=lr_in_hide*adjust2[j]*inputs[i]
         
         #Phase V
-		#calculate the square error of all outputs
-        e+=abs(normal_out-sig2)*abs(normal_out-sig2)
-        error=e/2
+        #calculate the square error of all outputs
+        e += (normal_out-sig2)*(normal_out-sig2)
+        error= e / 2.0
         
         #Phase VI
         threshold2=threshold2+lr_out_sigmoid*adjust1
@@ -124,7 +121,3 @@ for n in range(10000):
     print "e:"+str(e)
     print "adjust1:"+str(adjust1)
     print "sig2:"+str(sig2)
-
-
-
-        
