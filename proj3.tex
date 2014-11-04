@@ -18,22 +18,64 @@ We attempt to classify images of handwritten digits written on various textured 
 \\
 ]
 \section{Introduction}
+
 \section{Preprocessing}
 We tried many different preprocessing methods in attempt to reduce images noise, sharpen the appearance of the target digit, and most importantly improve our algorithms' accuracy. The first and most basic of theses methods was to normalize all of the images to a $[0,1]$ scale. The reason for this decision was that while browsing through the images we noticed that many were mostly gray with very little black or white. We believed that by normalizing the images there would be more contrast between the digit and the background which would make it easier to identify the digit.
 
 While normalization proved promising in validation, increasing our validation accuracy by roughly 1\%, our actual Kaggle submissions scored lower than the un-normalized submission.
 
-Another method we tried was image sharpening. Image sharpening works by subtracting a blurred copy of the image from a scaled version of the original image. In particular we tried subtracting 
+Another method we tried was image sharpening. Image sharpening works by subtracting a blurred copy of the image from a scaled version of the original image. The final image is given by the formula: \[\text{sharpened} = 1.5 \cdot \text{original} - 0.5 \cdot \text{blurred}\]
+
+Unfortunately this method showed no improvement over the non-sharpened images.
+
+We also tried edge detection via the Laplacian operator which is the sum of the second derivatives. In order to calculate the the Laplacian the original image is convolved with the kernel  below.
+\[\Delta f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}
+\qquad
+\begin{bmatrix}
+0 & 1 & 0 \\
+1 & -4 & 1 \\
+0 & 1 & 0
+\end{bmatrix}
+\]
+This operation finds area of the image where image intensity changes rapidly. These areas are then assumed to be edges. The problem with this approach however is that the image data becomes very sparse as information 
+
+In additional to applying various image filters we also attempted to increase the amount amount of data available us by adding rotated copies of the original data to our dataset. Since the digits from the original test were rotated at random we believed this would increase the amount to useable data and therefore are test results.
 \section{Feature Selection}
+For Naive Bayes and the convolutional neural net we used the raw image data.
 \section{Algorithms}
 \subsection{Naive Bayes}
 Naive Bayes is a basic machine learning algorithm based on Bayes rule that can be used for multiclass classification. It uses Bayes rule along with the assumption that all features are conditionally independent given the class. The decision rule for Bayes rule is given by:
 \[ \argmax_c \Pr(C = c) \prod_{i=0}^{n} \Pr(F_i = f_i | C = c)\]
 We used a variant of Naive Bayes called Multinomial Naive Bayes. This method creates a Multinomial probability distribution for each feature given the class. In technical terms we estimate the distribution $\Pr(F_i = f_i | C = c)$ over each features $f \in F$ and each class $ c \in C$ from our training data. Then we use the decision rule to find the class $c$ which maximizes this probability when classifying a test example.
+
+In order to model 
 \subsection{Neural Network}
 \subsection{Support Vector Machine}
 \subsection{Convolutional Neural Network}
+Convolution Neural Networks take inspiration from nature. In the 1960's Hubel \& Weisel conducted a wealth research on cats and monkeys in order to try to understand the biological vision systems of the brain. Their research showed that the vision system consisted of a number of `receptive fields' which were layered on top each other. They also showed that vision at least in the first steps of the vision system where highly localized. Convolutional Neural use this notion of locality when building their neurons. Where as Fully Connected NNs accept inputs from all other neurons CNNs attempt to model the biological vision system by taking locality into account in the first layers of the network. The locals layers are then feed into a FNN at the end of the network to compute the final output. This has allowed CNNs to achieve remarkably good results in the area of image recognition. 
+\subsubsection{Methodology}
+In order to build our CNN we used the Caffe \cite{jia2014caffe} CNN framework. Caffe allows one to create a CNN using Google Protocol Buffers, a structured data definition language similar to XML and JSON, to define the structure of the network including convolution, pooling, and fully connected layers as well as output layers such as loss, argmax, and accuracy. Using Caffe one simply has to define their NN no coding required. Caffe will then compile this the definition file and build the network from it.
+
+We based our final network off of the LeNet architecture \cite{leCunnGradient}. This architecture was recommend by the MNIST tutorial provided on Caffe website. Since our dataset is very similar to the MNIST dataset we believed this would be a good place to start. 
+
+In order to train and validate the performance of our our network we segmented the dataset into 5 parts. We used the first 4 segments to train network and the last segment to validate against. We did not perform cross validation as the cost of train the network was quite high. 
+\subsubsection{Network Architecture}
+Using the MNIST architecture as a our starting point we managed achieved achieve 86.7\% accuracy on the public Kaggle test set. By adding an additional convolutional and pooling layer we managed to increase this to 91.5\%. Next we increased the initial learning rate from 0.1 to 0.5 (a learning rate of 1 lead to NaN errors) in hopes that the previous network had fallen into a local minimum. After increasing the initial learning rate to 0.5 we scored 92.1\%. 
+
+Adding a fourth layer posed a slight problem as each convolutional + pooling layer reduces the original input of $48 \times 48$ by slightly more than half when using a $5 \times 5$ kernel. In fact the output of the 3 layer network using 5,5,5 for kernel was a single scalar value. Because of this a fourth layer could not added. In order to remedy this we had to reduce the kernel size, and therefore the rate of input size reduction, in the proceeding layers. In the end the 4 layer network used 5,5,3,3 for its kernel sizes. Unfortunately the 4 layer network proved to be significantly worse than the 3 layer network, only scoring in the 75\% range. Because of this, and the fact that the extra layer increased the training time, we choose no to train any additional 4 layer networks.
+ 
+\subsubsection{GPU Training}
+In order to train our network we used a single nVidia GTX 860m GPU with 2GB of memory we were able to train and validate our networks to convergence in roughly 20 minutes. This allowed us to easily tune parameters and add remove layers from the network inorder to see their effect on the validation score.
+
+Graphics Processing Units (GPUs) allow for massively parallel operations to be performed on matrices and vectors. Traditionally used for graphics processing and rendering GPUs have recently found use in the fields of image processing and recognition. 
+
+The main utility behind using GPUs is that they employ the use of thousands of lightweight threads that run in parallel. This allows for many operations on images to be processed at the same time. GPUs usually have on the order $10^4$ threads.
+
+In stark contrast to CPU programming GPU programming rarely uses common programming constructs such as loops and conditionals. nVidia\textsuperscript{\textregistered}'s CUDA uses a system of threads, block, and grids to execute operations in parallel. In particular each block can be assigned a number threads to operate on it. Each block can be be a 1,2,or 3 dimensional matrix. Blocks are grouped together in grids. In order to manipulate the data  users apply a kernel to each grid. In order of apply a convolution to an image would be mapped to a single block. A grid would consist of a batch of images. In the context of our digit recognition problem we could assign $48 \times 48 = 2304$ threads to each block corresponding to 1 thread per pixel. The kernel (function) we would apply to each block would be a very basic function that computes the weighted sum of a given pixel and its neighbours based on the convolution kernel (image).
 \section{Discussion}
 \section{References}
+\bibliography{./biblio.bib}
+\bibliographystyle{unsrt}
+
 \section{Appendix}
 \end{document}
