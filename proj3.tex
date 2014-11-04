@@ -18,6 +18,15 @@ We attempt to classify images of handwritten digits written on various textured 
 \\
 ]
 \section{Introduction}
+Recently, character recognition technology is used in document analysis and recognition community doe to increasing demand of converting an enormous amount of printed or handwritten information to a digital format. Application of character recognition is converting historical, technical and economic printed documents into digital form. There are some successful implementation of optical character recognition (OCR) in digitization of handwritten documents. This field is quite challenging due to the high variability produced by noises, handwriting styles and image quality. Real world applications like bank cheque processing counts for handwriting variability. \cite {diem2013icdar} Also new handwritten digit dataset "CVL dataset" was released. 
+
+\cite {liu2003handwritten} A fast and effective character recognition system required to solve the handwriting recognition problems such as bank cheque, automatic form processing or postal mail sorting. It is necessary to highlight that not only high speed but an accurate system is needed for classification process in real time environments. The main problem in recognizing character is variability. The same class character can be written in different sizes and orientation angles.
+
+For improving the performance in recognition problems, image is divided into local regions. \cite {lazebnik2006beyond} This method is known as image zoning and highly successful in computer vision field.
+
+\cite {ciresan2012multi} Convolutional algorithms give best accuracy (99.73%) for MNIST database. Ciseran et al. expanded the training and testing database, including elastic distortions. Studies proved that negligence of distortion results into low accuracy rates. \cite {gil2014handwritten} Also, it is proved that classifiers which use only digit characteristics not the full image perform poorly.
+The rest of this document is organized as follows: in section 2, we describe in detail different preprocessing approaches. Section 3 describes feature selection method. Section 4 describes different classification algorithm. Section 5 discusses the experimental evaluation.
+
 \section{Preprocessing}
 The most basic method to reduce noise from any signal is to average it across lot of samples.  We tried to average all images for the same class to get rid of noise. As the noise (texture) is random, it is not a great technique to reduce the noise.
 
@@ -77,27 +86,7 @@ Gaussian	40.24%	39.21%
 \subsection{Convolutional Neural Network}
 \section{Discussion}
 \section{References}
-@MISC{Maji09fastand,
-    author = {Subhransu Maji and Jitendra Malik},
-    title = {Fast and Accurate Digit Classification},
-    year = {2009}
-}
-@inproceedings{larochelle2007empirical,
-  title={An empirical evaluation of deep architectures on problems with many factors of variation},
-  author={Larochelle, Hugo and Erhan, Dumitru and Courville, Aaron and Bergstra, James and Bengio, Yoshua},
-  booktitle={Proceedings of the 24th international conference on Machine learning},
-  pages={473--480},
-  year={2007},
-  organization={ACM}
-}
-@incollection{chen2006combining,
-  title={Combining SVMs with various feature selection strategies},
-  author={Chen, Yi-Wei and Lin, Chih-Jen},
-  booktitle={Feature extraction},
-  pages={315--324},
-  year={2006},
-  publisher={Springer}
-}
-
+\bibliographystyle{plain}
+\bibliography{bibliography.bib}
 \section{Appendix}
 \end{document}
