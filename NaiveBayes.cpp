@@ -134,14 +134,14 @@ int main(int argc, char* argv[]){
     size_t loaded = nb.load_train(data);
     std::cerr << "loaded " << loaded << " examples" << std::endl;
     if(std::string(argv[1]) == "validate"){
-        for(int i = 10; i < 100; i ++){
+        for(int i = 1; i < 100; i ++){
             float right = 0;
-            const size_t step = 1000;
+            const size_t step = 5000;
             for(int j = 0; j < 50000; j += step){
                 nb.train(i, j, j + step);
                 right += nb.validate(j, j + step);
             }
-            std::cout << i << "," << (right / 50.0) << std::endl;
+            std::cout << i << "," << (right / 10.0) << std::endl;
         }
     }
     else if(std::string(argv[1]) == "test"){
