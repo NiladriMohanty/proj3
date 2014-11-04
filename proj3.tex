@@ -18,13 +18,13 @@ We attempt to classify images of handwritten digits written on various textured 
 \\
 ]
 \section{Introduction}
-Recently, character recognition technology is used in document analysis and recognition community doe to increasing demand of converting an enormous amount of printed or handwritten information to a digital format. Application of character recognition is converting historical, technical and economic printed documents into digital form. There are some successful implementation of optical character recognition (OCR) in digitization of handwritten documents. This field is quite challenging due to the high variability produced by noises, handwriting styles and image quality. Real world applications like bank cheque processing counts for handwriting variability. \cite {diem2013icdar} Also new handwritten digit dataset "CVL dataset" was released. 
+Recently, character recognition technology is used in document analysis and recognition community doe to increasing demand of converting an enormous amount of printed or handwritten information to a digital format. Application of character recognition is converting historical, technical and economic printed documents into digital form. There are some successful implementation of optical character recognition (OCR) in digitization of handwritten documents. This field is quite challenging due to the high variability produced by noises, handwriting styles and image quality. Real world applications like bank cheque processing counts for handwriting variability. Also new handwritten digit dataset "CVL dataset" was released \cite {diem2013icdar}. 
 
-\cite {liu2003handwritten} A fast and effective character recognition system required to solve the handwriting recognition problems such as bank cheque, automatic form processing or postal mail sorting. It is necessary to highlight that not only high speed but an accurate system is needed for classification process in real time environments. The main problem in recognizing character is variability. The same class character can be written in different sizes and orientation angles.
+A fast and effective character recognition system required to solve the handwriting recognition problems such as bank cheque, automatic form processing or postal mail sorting \cite {liu2003handwritten}. It is necessary to highlight that not only high speed but an accurate system is needed for classification process in real time environments. The main problem in recognizing character is variability. The same class character can be written in different sizes and orientation angles.
 
-For improving the performance in recognition problems, image is divided into local regions. \cite {lazebnik2006beyond} This method is known as image zoning and highly successful in computer vision field.
+For improving the performance in recognition problems, image is divided into local regions. This method is known as image zoning and highly successful in computer vision field \cite {lazebnik2006beyond}.
 
-\cite {ciresan2012multi} Convolutional algorithms give best accuracy (99.73\%) for MNIST database. Ciseran et al. expanded the training and testing database, including elastic distortions. Studies proved that negligence of distortion results into low accuracy rates. \cite {gil2014handwritten} Also, it is proved that classifiers which use only digit characteristics not the full image perform poorly.
+Convolutional algorithms give best accuracy (99.73\%) for MNIST database \cite {ciresan2012multi}. Ciseran et al. expanded the training and testing database, including elastic distortions. Studies proved that negligence of distortion results into low accuracy rates. Also, it is proved that classifiers which use only digit characteristics not the full image perform poorly \cite {gil2014handwritten}.
 The rest of this document is organized as follows: in section 2, we describe in detail different preprocessing approaches. Section 3 describes feature selection method. Section 4 describes different classification algorithm. Section 5 discusses the experimental evaluation.
 
 \section{Preprocessing}
@@ -57,7 +57,7 @@ Another method we tried was image sharpening. Image sharpening works by subtract
 
 Median filter is used to filter the noise. Again, it did not yield any considerable differences than raw images. Therefore, we did not focused on this technique of preprocessing.
 \section{Feature Selection}
-\cite {Maji09fastand} Blockwise histograms of local orientations is used to recognize objects. This is called as Pyramid Histogram of Oriented Gradients (PHOG). Each pixel in the image is assigned an orientation and magnitude based on the local gradient and histograms are constructed by aggregating the pixel responses within cells of various sizes. The input grayscale image is convolved with filters which respond to horizontal and vertical gradients from which the magnitude and orientation is computed. The orientation could be signed (0−360) or unsigned (0−180). The signed gradient distinguishes between black to white and white to black transitions which might be useful for digits. PHOG features are tested with Support Vector Machine (SVM) linear and gaussian kernel. 
+Blockwise histograms of local orientations is used to recognize objects \cite {Maji09fastand}. This is called as Pyramid Histogram of Oriented Gradients (PHOG). Each pixel in the image is assigned an orientation and magnitude based on the local gradient and histograms are constructed by aggregating the pixel responses within cells of various sizes. The input grayscale image is convolved with filters which respond to horizontal and vertical gradients from which the magnitude and orientation is computed. The orientation could be signed $(0−360)$ or unsigned $(0−180)$. The signed gradient distinguishes between black to white and white to black transitions which might be useful for digits. PHOG features are tested with Support Vector Machine (SVM) linear and gaussian kernel. 
 \section{Algorithms}
 \subsection{Naive Bayes}
 Naive Bayes is a basic machine learning algorithm based on Bayes rule that can be used for multiclass classification. It uses Bayes rule along with the assumption that all features are conditionally independent given the class. The decision rule for Bayes rule is given by:
@@ -68,7 +68,7 @@ In order to model
 \subsection{Neural Network}
 \subsection{Support Vector Machine}
 Support vector machines (SVMs) have been a promising tool for data classification. Its basic idea is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
-We already discussed different feature selection strategies. \cite {chen2006combining} Combination of features and SVM is used to classify using SVM classifier. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Validation and test dataset accuracy is shown in table 1.
+We already discussed different feature selection strategies. Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Validation and test dataset accuracy is shown in table 1.
 Features	Validation accuracy	Test accuracy
 PHOG features	14.63%	10.54%
 Table 1. PHOG features linear SVM result
@@ -79,7 +79,7 @@ $f_i=\text{similarity}(x_i,l_i)$
  
 To test whether SVM is a good classifier for this kind of problem or not, we tried SVM with gaussian kernel. The gaussian kernel function is given below:
 $f_i=\exp⁡((-‖x-l_i ‖)/(2σ^2 ))$
-\cite {larochelle2007empirical} SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$. Gaussian kernel SVM results for different sigma and C is shown in table 2.
+SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$ \cite {larochelle2007empirical}. Gaussian kernel SVM results for different sigma and C is shown in table 2.
 \\
 \\
 \begin{tabular}{|c|c|c|c|}
