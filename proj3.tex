@@ -73,37 +73,19 @@ In order to select $B$ we performed 10 fold cross validation. We found that valu
 \subsection{Neural Network}
 \subsection{Support Vector Machine}
 Support vector machines (SVMs) have been a promising tool for data classification. Its basic idea is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
-<<<<<<< HEAD
+
 We already discussed different feature selection strategies. Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Validation accuracy is 14.63% and test dataset accuracy is 10.54%.
-=======
-We already discussed different feature selection strategies\cite {chen2006combining}. Combination of features and SVM is used to classify using SVM classifier. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Validation and test dataset accuracy is shown in table 1.
-\\
-
-\begin{tabular}{|c|c|c|}
-\hline
-Features & Validation & Test \\
-\hline
-PHOG features &	14.63\% &	10.54\% \\
-\hline
-\end{tabular}
-\\
-
-Table 1. PHOG features linear SVM result
-\\
->>>>>>> c83f7486ddc170602f5a7350350ef1e72ca1e5a7
 
 Linear SVM fails to classify test dataset by PHOG features. It can be inferred that there is no linear separation between different classes.
 SVM can also perform efficiently for datasets which are not linearly separated. For non-linear classification, it computes a new feature for every given example depending on proximity to landmarks. It is important to note that these landmarks are chosen to be equal to $x_i, i=1,…,m$. Given $x$, the new features are computed as-
 \[f_i=\text{similarity}(x_i,l_i)\]
  
 To test whether SVM is a good classifier for this kind of problem or not, we tried SVM with gaussian kernel. The gaussian kernel function is given below:
-<<<<<<< HEAD
-$f_i=\exp⁡((-‖x-l_i ‖)/(2σ^2 ))$
-SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$ \cite {larochelle2007empirical}. Gaussian kernel SVM results for different sigma and C is shown in table 1.
-=======
+
 \[f_i=\exp\Big(\frac{-‖x-l_i ‖}{2\sigma^2 }\Big)\]
-\cite {larochelle2007empirical} SVM classifier with gaussian kernel is tested with σ ranging from $10^{-7}$ to $1$ and C = 0.1 to $10^5$. Gaussian kernel SVM results for different sigma and C is shown in table 2.
->>>>>>> c83f7486ddc170602f5a7350350ef1e72ca1e5a7
+
+SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$ \cite {larochelle2007empirical}. Gaussian kernel SVM results for different sigma and C is shown in table 1.
+
 \\
 \\
 \begin{tabular}{|c|c|c|c|}
