@@ -5,12 +5,11 @@
 \usepackage{graphicx}
 \usepackage{cite}
 
-
 \newcommand{\argmax}{\operatornamewithlimits{argmax}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 
 \title{Handwritten Digit Classification}
-\author{Ian Forbes, Xinchi Chen, Niladri Mohanty}
+\author{Ian Forbes, Xinchi Chen, Niladri Mohanty\\ Team: Mr. Pinks}
 \begin{document}
 \twocolumn[
 \maketitle
@@ -60,15 +59,13 @@ Naive Bayes is a basic machine learning algorithm based on Bayes rule that can b
 \[ \argmax_c \Pr(C = c) \prod_{i=0}^{n} \Pr(F_i = f_i | C = c)\]
 We used a variant of Naive Bayes called Multinomial Naive Bayes. This method creates a Multinomial probability distribution for each feature given the class. Mathematically speaking we estimate the distribution $\Pr(F_i = f_i | C = c)$ over each of the features $f \in F$ and each class $ c \in C$ using our training data. Then we use the decision rule to find the class $c$ which maximizes this probability when classifying a test example.
 
-In order to model the probability distributions of $\Pr(F_i = f_i | C = c)$ as a multinomial distribution we needed to discretize the the continuous $[0,1]$ values present in the images to integer values. In order to do this we created
+In order to model the probability distributions of $\Pr(F_i = f_i | C = c)$ as a multinomial distributions we needed to discretize the the continuous $[0,1]$ values present in the images to integer values. In order to do this we created a histogram with $B$ bins where intervals of size $1/B$ from $[0,1]$ were mapped to each bin. For example in the case where $B = 2$, pixels with intensity in the range $[0,0.5]$ would be mapped into bin 1 whereas pixels with intensity in $(0,5,1.0]$ would be mapped to bin 2. This essentially binarizes the image.
 
-Ideally the number of bins $B$ would be extremely large so that pixels wpubld be assigned to bins with very fine precision. The goal being to exactly replicate continuous distribution perfectly. However this would require near infinite data to construct. Because of this we need to select $B$ very carefully. To small and we loose information, to large and our histogram becomes to sparse. 
-
-In order to select $B$ we performed 10 fold cross validation. We found that values less than $B=15$ provided poor results while for $ 15 < B < 50$ the performance was roughly the same.
+Ideally the number of bins $B$ would be extremely large so that pixels would be assigned to bins with very fine precision. The goal being to exactly replicate continuous distribution perfectly. However this would require near infinite data to construct. Because of this we need to select $B$ very carefully. In order to select $B$ we performed 10 fold cross validation. We found $B=27$ to be the optimal value scoring 37.048\%. Our cross validation results for $B$ are shown in figure \ref{bins}.
 \begin{figure}
-\includegraphics[trim=150 50 150 50,clip=true,width=0.5\textwidth]{./figure_1.png}
+\includegraphics[trim=150 40 150 50,clip=true,width=0.5\textwidth]{./figure_1.png}
+\caption{Naive Bayes Accuracy as a function of the number of bins $B$. The best value of $B$ was found to be 27 with accuracy 37.048\%.}
 \label{bins}
-\caption{Naive Bayes Accuracy as a function of the number of bins $B$. The best value of $B$ was found to be 27.}
 \end{figure}
 \subsection{Neural Network}
 \subsection{Support Vector Machine}
@@ -85,7 +82,6 @@ To test whether SVM is a good classifier for this kind of problem or not, we tri
 \[f_i=\exp\Big(\frac{-‖x-l_i ‖}{2\sigma^2 }\Big)\]
 
 SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$ \cite {larochelle2007empirical}. Gaussian kernel SVM results for different sigma and C is shown in table 1.
-
 \\
 \\
 \begin{tabular}{|c|c|c|c|}
@@ -117,7 +113,7 @@ Gaussian & 40.24\% & 39.21\% \\
 \end{tabular}
 \\
 
-Table 2. Linear & Gaussian kernel SVM result
+Table 2. Linear \& Gaussian kernel SVM result
 \\
 
 \subsection{Convolutional Neural Network}
@@ -144,5 +140,8 @@ The main utility behind using GPUs is that they employ the use of thousands of l
 \bibliographystyle{unsrt}
 \bibliography{biblio.bib}
 \section*{Appendix}
-
+\begin{figure}
+\includegraphics[scale=0.30]{./nn.png}
+\caption{Visualization of our Convolutional Neural Network.}
+\end{figure}
 \end{document}
