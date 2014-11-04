@@ -3,6 +3,8 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{cite}
+
 
 \newcommand{\argmax}{\operatornamewithlimits{argmax}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
@@ -51,9 +53,7 @@ This operation finds area of the image where image intensity changes rapidly. Th
 
 In additional to applying various image filters we also attempted to increase the amount amount of data available us by adding rotated copies of the original data to our dataset. Since the digits from the original test were rotated at random we believed this would increase the amount to useable data and therefore are test results.
 \section{Feature Selection}
-We also tried to remove noise by utilizing Fourier Transforms. FFT can help to provide new ways to do familiar processing such as enhancing brightness and contrast, blurring, sharpening and noise removal. Fourier Transforms is the key to remove noise (small features) from an image, while preserving the overall larger aspects of the image. Although after inverse FFT, images are more clearer than the raw images and digits are recognisable by us. But SVM gives very low accuracy on both validation and test dataset.
-
-Another method we tried was image sharpening. Image sharpening works by subtracting a blurred copy of the image from a scaled version of the original image. In particular we tried subtracting 
+We tried was image sharpening. Image sharpening works by subtracting a blurred copy of the image from a scaled version of the original image. In particular we tried subtracting 
 
 Median filter is used to filter the noise. Again, it did not yield any considerable differences than raw images. Therefore, we did not focused on this technique of preprocessing.
 \section{Feature Selection}
@@ -97,22 +97,8 @@ Table 2. PHOG features gaussian SVM result
 \\
 
 The best accuracy by SVM is 32.61% on validation dataset and 29.82% on test dataset. We concluded that PHOG features are not best suited for this kind of problem where image is combined with lot of random textures. Although, Maji et. al. obtained very low percentage of error with the same features because their images were free from any noise.
-By one more way, we tried to test linear SVM classifier. We applied fast fourier transform and then inverse fast fourier transform on training images to remove noise which is already explained in feature selection section. Then we tested these features with SVM linear and gaussian kernel and results is shown in table 3.
-\\
 
-\begin{tabular}{|c|c|c|}
-\hline
-Features &	Validation & Test accuracy \\ \hline
-Linear SVM	& 10.3\% &	8.36\% \\
-Gaussian SVM & 	13.96\% & 9.47\% \\
-\hline
-\end{tabular}
-\\
-
-Table 3. FFT/iFFT features SVM result
-\\
-
-We also tested SVMs both kernels for raw data. The accuracy for validation and test datasets are shown in table 4.
+We also tested SVMs both kernels for raw data. The accuracy for validation and test datasets are shown in table 3.
 \\
 
 \begin{tabular}{|c|c|c|}
@@ -131,7 +117,7 @@ In order to build our CNN we used the Caffe \cite{jia2014caffe} CNN framework. C
 
 We based our final network off of the LeNet architecture \cite{leCunnGradient}. This architecture was recommend by the MNIST tutorial provided on Caffe website. Since our dataset is very similar to the MNIST dataset we believed this would be a good place to start. 
 
-In order to train and validate the performance of our our network we segmented the dataset into 5 parts. We used the first 4 segments to train network and the last segment to validate against. We did not perform cross validation as the cost of train the network was quite high. 
+In order to train and validate the performance of our network we segmented the dataset into 5 parts. We used the first 4 segments to train network and the last segment to validate against. We did not perform cross validation as the cost of train the network was quite high. 
 \subsubsection{Network Architecture}
 Using the MNIST architecture as a our starting point we managed achieved achieve 86.7\% accuracy on the public Kaggle test set. By adding an additional convolutional and pooling layer we managed to increase this to 91.5\%. Next we increased the initial learning rate from 0.1 to 0.5 (a learning rate of 1 lead to NaN errors) in hopes that the previous network had fallen into a local minimum. After increasing the initial learning rate to 0.5 we scored 92.1\%. 
 
