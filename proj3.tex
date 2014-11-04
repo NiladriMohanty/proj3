@@ -68,10 +68,7 @@ In order to model
 \subsection{Neural Network}
 \subsection{Support Vector Machine}
 Support vector machines (SVMs) have been a promising tool for data classification. Its basic idea is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
-We already discussed different feature selection strategies. Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Validation and test dataset accuracy is shown in table 1.
-Features	Validation accuracy	Test accuracy
-PHOG features	14.63%	10.54%
-Table 1. PHOG features linear SVM result
+We already discussed different feature selection strategies. Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Validation accuracy is 14.63% and test dataset accuracy is 10.54%.
 
 Linear SVM fails to classify test dataset by PHOG features. It can be inferred that there is no linear separation between different classes.
 SVM can also perform efficiently for datasets which are not linearly separated. For non-linear classification, it computes a new feature for every given example depending on proximity to landmarks. It is important to note that these landmarks are chosen to be equal to $x_i, i=1,…,m$. Given $x$, the new features are computed as-
@@ -79,7 +76,7 @@ $f_i=\text{similarity}(x_i,l_i)$
  
 To test whether SVM is a good classifier for this kind of problem or not, we tried SVM with gaussian kernel. The gaussian kernel function is given below:
 $f_i=\exp⁡((-‖x-l_i ‖)/(2σ^2 ))$
-SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$ \cite {larochelle2007empirical}. Gaussian kernel SVM results for different sigma and C is shown in table 2.
+SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$ \cite {larochelle2007empirical}. Gaussian kernel SVM results for different sigma and C is shown in table 1.
 \\
 \\
 \begin{tabular}{|c|c|c|c|}
@@ -93,12 +90,12 @@ $10^-3$	 & $10^3$ & 29.61\%	& 26.59\% \\
 \end{tabular}
 \\
 
-Table 2. PHOG features gaussian SVM result
+Table 1. PHOG features gaussian SVM result
 \\
 
 The best accuracy by SVM is 32.61% on validation dataset and 29.82% on test dataset. We concluded that PHOG features are not best suited for this kind of problem where image is combined with lot of random textures. Although, Maji et. al. obtained very low percentage of error with the same features because their images were free from any noise.
 
-We also tested SVMs both kernels for raw data. The accuracy for validation and test datasets are shown in table 3.
+We also tested SVMs both kernels for raw data. The accuracy for validation and test datasets are shown in table 2.
 \\
 
 \begin{tabular}{|c|c|c|}
@@ -108,7 +105,10 @@ Linear & 42.06\% & 39.48\% \\
 Gaussian & 40.24\% & 39.21\% \\
 \hline
 \end{tabular}
+\\
 
+Table 2. Linear & Gaussian kernel SVM result
+\\
 
 \subsection{Convolutional Neural Network}
 Convolution Neural Networks take inspiration from nature. In the 1960's Hubel \& Weisel conducted a wealth research on cats and monkeys in order to try to understand the biological vision systems of the brain. Their research showed that the vision system consisted of a number of `receptive fields' which were layered on top each other. They also showed that vision at least in the first steps of the vision system where highly localized. Convolutional Neural use this notion of locality when building their neurons. Where as Fully Connected NNs accept inputs from all other neurons CNNs attempt to model the biological vision system by taking locality into account in the first layers of the network. The locals layers are then feed into a FNN at the end of the network to compute the final output. This has allowed CNNs to achieve remarkably good results in the area of image recognition. 
