@@ -76,7 +76,7 @@ $f_i=\exp⁡((-‖x-l_i ‖)/(2σ^2 ))$
 \\
 \begin{tabular}{|c|c|c|c|}
 \hline
-$\sigma$ & C &	Validation accuracy	& Test accuracy \\ \hline
+$\sigma$ & C &	Validation & Test Accuracy \\ \hline
 $10^-7$  & 0.1	& 31.52\%	& 26.78\% \\
 $10^-5$	 & 10	& 32.61\%	& 29.82\% \\
 $10^-3$	 & $10^3$ & 29.61\%	& 26.59\% \\
@@ -90,17 +90,30 @@ Table 2. PHOG features gaussian SVM result
 
 The best accuracy by SVM is 32.61% on validation dataset and 29.82% on test dataset. We concluded that PHOG features are not best suited for this kind of problem where image is combined with lot of random textures. Although, Maji et. al. obtained very low percentage of error with the same features because their images were free from any noise.
 By one more way, we tried to test linear SVM classifier. We applied fast fourier transform and then inverse fast fourier transform on training images to remove noise which is already explained in feature selection section. Then we tested these features with SVM linear and gaussian kernel and results is shown in table 3.
+\\
 
-FFT/iFFT features
-Features	Validation accuracy	Test accuracy
-Linear SVM	10.33%	8.36%
-Gaussian SVM	13.96%	9.47%
+\begin{tabular}{|c|c|c|}
+\hline
+Features &	Validation & Test accuracy \\ \hline
+Linear SVM	& 10.3\% &	8.36\% \\
+Gaussian SVM & 	13.96\% & 9.47\% \\
+\hline
+\end{tabular}
+\\
+
 Table 3. FFT/iFFT features SVM result
+\\
 
 We also tested SVMs both kernels for raw data. The accuracy for validation and test datasets are shown in table 4.
-Kernel	Validation accuracy	Test accuracy
-Linear	42.06%	39.48%
-Gaussian	40.24%	39.21%
+\\
+
+\begin{tabular}{|c|c|c|}
+\hline
+Kernel & Validation accuracy & Test accuracy \\ \hline
+Linear & 42.06\% & 39.48\% \\
+Gaussian & 40.24\% & 39.21\% \\
+\hline
+\end{tabular}
 
 
 \subsection{Convolutional Neural Network}
