@@ -18,17 +18,14 @@ We attempt to classify images of handwritten digits written on various textured 
 \\
 ]
 \section{Introduction}
-<<<<<<< HEAD
 Recently, character recognition technology is used in document analysis and recognition community doe to increasing demand of converting an enormous amount of printed or handwritten information to a digital format. Application of character recognition is converting historical, technical and economic printed documents into digital form. There are some successful implementation of optical character recognition (OCR) in digitization of handwritten documents. This field is quite challenging due to the high variability produced by noises, handwriting styles and image quality. Real world applications like bank cheque processing counts for handwriting variability. \cite {diem2013icdar} Also new handwritten digit dataset "CVL dataset" was released. 
 
 \cite {liu2003handwritten} A fast and effective character recognition system required to solve the handwriting recognition problems such as bank cheque, automatic form processing or postal mail sorting. It is necessary to highlight that not only high speed but an accurate system is needed for classification process in real time environments. The main problem in recognizing character is variability. The same class character can be written in different sizes and orientation angles.
 
 For improving the performance in recognition problems, image is divided into local regions. \cite {lazebnik2006beyond} This method is known as image zoning and highly successful in computer vision field.
 
-\cite {ciresan2012multi} Convolutional algorithms give best accuracy (99.73%) for MNIST database. Ciseran et al. expanded the training and testing database, including elastic distortions. Studies proved that negligence of distortion results into low accuracy rates. \cite {gil2014handwritten} Also, it is proved that classifiers which use only digit characteristics not the full image perform poorly.
+\cite {ciresan2012multi} Convolutional algorithms give best accuracy (99.73\%) for MNIST database. Ciseran et al. expanded the training and testing database, including elastic distortions. Studies proved that negligence of distortion results into low accuracy rates. \cite {gil2014handwritten} Also, it is proved that classifiers which use only digit characteristics not the full image perform poorly.
 The rest of this document is organized as follows: in section 2, we describe in detail different preprocessing approaches. Section 3 describes feature selection method. Section 4 describes different classification algorithm. Section 5 discusses the experimental evaluation.
-=======
->>>>>>> 536655b60cb38d633547d14c668c57dc92385bf8
 
 \section{Preprocessing}
 The most basic method to reduce noise from any signal is to average it across lot of samples.  We tried to average all images for the same class to get rid of noise. As the noise (texture) is random, it is not a great technique to reduce the noise.
@@ -149,16 +146,8 @@ The main utility behind using GPUs is that they employ the use of thousands of l
 
 In stark contrast to CPU programming GPU programming rarely uses common programming constructs such as loops and conditionals. nVidia\textsuperscript{\textregistered}'s CUDA uses a system of threads, block, and grids to execute operations in parallel. In particular each block can be assigned a number threads to operate on it. Each block can be be a 1,2,or 3 dimensional matrix. Blocks are grouped together in grids. In order to manipulate the data  users apply a kernel to each grid. In order of apply a convolution to an image would be mapped to a single block. A grid would consist of a batch of images. In the context of our digit recognition problem we could assign $48 \times 48 = 2304$ threads to each block corresponding to 1 thread per pixel. The kernel (function) we would apply to each block would be a very basic function that computes the weighted sum of a given pixel and its neighbours based on the convolution kernel (image).
 \section{Discussion}
-<<<<<<< HEAD
-\section{References}
-\bibliographystyle{plain}
-\bibliography{bibliography.bib}
-\section{Appendix}
-\end{document}
-=======
 \bibliographystyle{plain}
 \bibliography{biblio.bib}
 \section*{Appendix}
 
 \end{document}
->>>>>>> 536655b60cb38d633547d14c668c57dc92385bf8
