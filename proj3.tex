@@ -20,6 +20,8 @@ We attempt to classify images of handwritten digits written on various textured 
 \section{Introduction}
 
 \section{Preprocessing}
+The most basic method to reduce noise from any signal is to average it across lot of samples.  We tried to average all images for the same class to get rid of noise. As the noise (texture) is random, it is not a great technique to reduce the noise.
+
 We tried many different preprocessing methods in attempt to reduce images noise, sharpen the appearance of the target digit, and most importantly improve our algorithms' accuracy. The first and most basic of theses methods was to normalize all of the images to a $[0,1]$ scale. The reason for this decision was that while browsing through the images we noticed that many were mostly gray with very little black or white. We believed that by normalizing the images there would be more contrast between the digit and the background which would make it easier to identify the digit.
 
 While normalization proved promising in validation, increasing our validation accuracy by roughly 1\%, our actual Kaggle submissions scored lower than the un-normalized submission.
@@ -41,7 +43,13 @@ This operation finds area of the image where image intensity changes rapidly. Th
 
 In additional to applying various image filters we also attempted to increase the amount amount of data available us by adding rotated copies of the original data to our dataset. Since the digits from the original test were rotated at random we believed this would increase the amount to useable data and therefore are test results.
 \section{Feature Selection}
-For Naive Bayes and the convolutional neural net we used the raw image data.
+We also tried to remove noise by utilizing Fourier Transforms. FFT can help to provide new ways to do familiar processing such as enhancing brightness and contrast, blurring, sharpening and noise removal. Fourier Transforms is the key to remove noise (small features) from an image, while preserving the overall larger aspects of the image. Although after inverse FFT, images are more clearer than the raw images and digits are recognisable by us. But SVM gives very low accuracy on both validation and test dataset.
+
+Another method we tried was image sharpening. Image sharpening works by subtracting a blurred copy of the image from a scaled version of the original image. In particular we tried subtracting 
+
+Median filter is used to filter the noise. Again, it did not yield any considerable differences than raw images. Therefore, we did not focused on this technique of preprocessing.
+\section{Feature Selection}
+\cite {Maji09fastand} Blockwise histograms of local orientations is used to recognize objects. This is called as Pyramid Histogram of Oriented Gradients (PHOG). Each pixel in the image is assigned an orientation and magnitude based on the local gradient and histograms are constructed by aggregating the pixel responses within cells of various sizes. The input grayscale image is convolved with filters which respond to horizontal and vertical gradients from which the magnitude and orientation is computed. The orientation could be signed (0−360) or unsigned (0−180). The signed gradient distinguishes between black to white and white to black transitions which might be useful for digits. PHOG features are tested with Support Vector Machine (SVM) linear and gaussian kernel. 
 \section{Algorithms}
 \subsection{Naive Bayes}
 Naive Bayes is a basic machine learning algorithm based on Bayes rule that can be used for multiclass classification. It uses Bayes rule along with the assumption that all features are conditionally independent given the class. The decision rule for Bayes rule is given by:
@@ -51,6 +59,41 @@ We used a variant of Naive Bayes called Multinomial Naive Bayes. This method cre
 In order to model 
 \subsection{Neural Network}
 \subsection{Support Vector Machine}
+Support vector machines (SVMs) have been a promising tool for data classification. Its basic idea is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
+We already discussed different feature selection strategies. \cite {chen2006combining} Combination of features and SVM is used to classify using SVM classifier. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Validation and test dataset accuracy is shown in table 1.
+Features	Validation accuracy	Test accuracy
+PHOG features	14.63%	10.54%
+Table 1. PHOG features linear SVM result
+
+Linear SVM fails to classify test dataset by PHOG features. It can be inferred that there is no linear separation between different classes.
+SVM can also perform efficiently for datasets which are not linearly separated. For non-linear classification, it computes a new feature for every given example depending on proximity to landmarks. It is important to note that these landmarks are chosen to be equal to x_i, wherei=1,…,m. Given x, the new features are computed as-
+f_i=similarity(x_i,l_i)
+ 
+To test whether SVM is a good classifier for this kind of problem or not, we tried SVM with gaussian kernel. The gaussian kernel function is given below:
+f_i=exp⁡((-‖x-l_i ‖)/(2σ^2 ))
+\cite {larochelle2007empirical} SVM classifier with gaussian kernel is tested with σ ranging from 10^-7 to 1 and C = 0.1 to 10^5. Gaussian kernel SVM results for different sigma and C is shown in table 2.
+Sigma	C	Validation accuracy	Test accuracy
+10^-7	0.1	31.52%	26.78%
+10^-5	10	32.61%	29.82%
+10^-3	10^3	29.61%	26.59%
+1	10^5	24.94%	17.29%
+Table 2. PHOG features gaussian SVM result
+
+The best accuracy by SVM is 32.61% on validation dataset and 29.82% on test dataset. We concluded that PHOG features are not best suited for this kind of problem where image is combined with lot of random textures. Although, Maji et. al. obtained very low percentage of error with the same features because their images were free from any noise.
+By one more way, we tried to test linear SVM classifier. We applied fast fourier transform and then inverse fast fourier transform on training images to remove noise which is already explained in feature selection section. Then we tested these features with SVM linear and gaussian kernel and results is shown in table 3.
+
+FFT/iFFT features
+Features	Validation accuracy	Test accuracy
+Linear SVM	10.33%	8.36%
+Gaussian SVM	13.96%	9.47%
+Table 3. FFT/iFFT features SVM result
+
+We also tested SVMs both kernels for raw data. The accuracy for validation and test datasets are shown in table 4.
+Kernel	Validation accuracy	Test accuracy
+Linear	42.06%	39.48%
+Gaussian	40.24%	39.21%
+
+
 \subsection{Convolutional Neural Network}
 Convolution Neural Networks take inspiration from nature. In the 1960's Hubel \& Weisel conducted a wealth research on cats and monkeys in order to try to understand the biological vision systems of the brain. Their research showed that the vision system consisted of a number of `receptive fields' which were layered on top each other. They also showed that vision at least in the first steps of the vision system where highly localized. Convolutional Neural use this notion of locality when building their neurons. Where as Fully Connected NNs accept inputs from all other neurons CNNs attempt to model the biological vision system by taking locality into account in the first layers of the network. The locals layers are then feed into a FNN at the end of the network to compute the final output. This has allowed CNNs to achieve remarkably good results in the area of image recognition. 
 \subsubsection{Methodology}
@@ -74,8 +117,26 @@ The main utility behind using GPUs is that they employ the use of thousands of l
 In stark contrast to CPU programming GPU programming rarely uses common programming constructs such as loops and conditionals. nVidia\textsuperscript{\textregistered}'s CUDA uses a system of threads, block, and grids to execute operations in parallel. In particular each block can be assigned a number threads to operate on it. Each block can be be a 1,2,or 3 dimensional matrix. Blocks are grouped together in grids. In order to manipulate the data  users apply a kernel to each grid. In order of apply a convolution to an image would be mapped to a single block. A grid would consist of a batch of images. In the context of our digit recognition problem we could assign $48 \times 48 = 2304$ threads to each block corresponding to 1 thread per pixel. The kernel (function) we would apply to each block would be a very basic function that computes the weighted sum of a given pixel and its neighbours based on the convolution kernel (image).
 \section{Discussion}
 \section{References}
-\bibliography{./biblio.bib}
-\bibliographystyle{unsrt}
-
+@MISC{Maji09fastand,
+    author = {Subhransu Maji and Jitendra Malik},
+    title = {Fast and Accurate Digit Classification},
+    year = {2009}
+}
+@inproceedings{larochelle2007empirical,
+  title={An empirical evaluation of deep architectures on problems with many factors of variation},
+  author={Larochelle, Hugo and Erhan, Dumitru and Courville, Aaron and Bergstra, James and Bengio, Yoshua},
+  booktitle={Proceedings of the 24th international conference on Machine learning},
+  pages={473--480},
+  year={2007},
+  organization={ACM}
+}
+@incollection{chen2006combining,
+  title={Combining SVMs with various feature selection strategies},
+  author={Chen, Yi-Wei and Lin, Chih-Jen},
+  booktitle={Feature extraction},
+  pages={315--324},
+  year={2006},
+  publisher={Springer}
+}
 \section{Appendix}
 \end{document}
