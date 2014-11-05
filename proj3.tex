@@ -52,7 +52,7 @@ The Median filter can also be used to filter the noise. Again, it did not yield 
 \section{Feature Selection}
 For the majority of our algorithms we used the raw pixel values. However we also tried some  more complex methods to extract features from the image data.
 
-\cite{Maji09fastand} Blockwise histograms of local orientations is used to recognize objects. This is called Pyramid Histogram of Oriented Gradients (PHOG). Each pixel in the image is assigned an orientation and magnitude based on the local gradient. Following this histograms are constructed by aggregating the pixel responses within cells of various sizes. The grayscale input image is convolved with filters which respond to horizontal and vertical gradients from which the magnitude and orientation is computed. The orientation could be signed (0−360) or unsigned (0−180). The signed gradient distinguishes between black to white and white to black transitions which might be useful for digits. PHOG features are tested with Support Vector Machine (SVM) linear and Gaussian kernel. 
+Blockwise histograms of local orientations is used to recognize objects\cite{Maji09fastand}. This is called Pyramid Histogram of Oriented Gradients (PHOG). Each pixel in the image is assigned an orientation and magnitude based on the local gradient. Following this histograms are constructed by aggregating the pixel responses within cells of various sizes. The grayscale input image is convolved with filters which respond to horizontal and vertical gradients from which the magnitude and orientation is computed. The orientation could be signed (0−360) or unsigned (0−180). The signed gradient distinguishes between black to white and white to black transitions which might be useful for digits. PHOG features are tested with Support Vector Machine (SVM) linear and Gaussian kernel. 
 \section{Algorithms}
 \subsection{Naive Bayes}
 Naive Bayes is a basic machine learning algorithm based on Bayes rule that can be used for multiclass classification. It uses Bayes rule along with the assumption that all features are conditionally independent given the class. The decision rule for Bayes rule is given by:
@@ -71,9 +71,9 @@ Ideally the number of bins $B$ would be extremely large so that pixels would be 
 \subsection{Support Vector Machine}
 Support vector machines (SVMs) have been a promising tool for data classification. Its basic idea is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
 
-We already discussed different feature selection strategies. Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Validation accuracy is 14.63% and test dataset accuracy is 10.54%.
+We already discussed different feature selection strategies. Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Linear SVM validation accuracy for PHOG features is 14.63% and test dataset accuracy is 10.54%.
 
-Linear SVM fails to classify test dataset by PHOG features. It can be inferred that there is no linear separation between different classes.
+Linear SVM fails to classify test dataset by PHOG features. It can be inferred that PHOG features can not be used to classify data by linear separation.
 SVM can also perform efficiently for datasets which are not linearly separated. For non-linear classification, it computes a new feature for every given example depending on proximity to landmarks. It is important to note that these landmarks are chosen to be equal to $x_i, i=1,…,m$. Given $x$, the new features are computed as-
 \[f_i=\text{similarity}(x_i,l_i)\]
  
@@ -137,6 +137,7 @@ Graphics Processing Units (GPUs) allow for massively parallel operations to be p
 The main utility behind using GPUs is that they employ the use of thousands of lightweight threads that run in parallel. This allows for many operations on images to be processed at the same time. GPUs usually have on the order $10^4$ threads.
 
 \section{Discussion}
+SVM linear kernel is not giving satisfactory results neither for raw features nor for PHOG features. It is evident that separating this dataset using linear decision boundary (either Naive bayes or Linear SVM) will result accuracy around 40\%. Even gaussian (rbf) kernel is not very efficient. We concluded that linear SVM is not an state of art algorithm for this kind of problem.
 \bibliographystyle{unsrt}
 \bibliography{biblio.bib}
 \section*{Appendix}
