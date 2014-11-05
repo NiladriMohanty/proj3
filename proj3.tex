@@ -72,7 +72,7 @@ Ideally the number of bins $B$ would be extremely large so that pixels would be 
 \subsection{Support Vector Machine}
 Support vector machines (SVMs) have shown to been a promising tool for data classification. The basic idea behind SVMs is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
 
-A Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Linear SVM validation accuracy for PHOG features is 14.63\% and test dataset accuracy is 10.54\%.
+A Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. 50000 training samples are divided into 42000 training dataset and 8000 validation dataset for all the trials of SVM. For C = 0.1, linear SVM validation accuracy for PHOG features is 14.63\% and test dataset accuracy is 10.54\%.  When C is selected as 10, validation accuracy dropped to 10.89\%.
 
 Linear SVM fails to classify test dataset by PHOG features. It can be inferred that PHOG features can not be used to classify data using linear separation.
 SVM can also perform efficiently for datasets which are not linearly separated. For non-linear classification, it computes a new feature for every given example depending on proximity to landmarks. It is important to note that these landmarks are chosen to be equal to $x_i, i=1,…,m$. Given $x$, the new features are computed as-
@@ -82,7 +82,7 @@ To test whether SVM is a good classifier for this kind of problem or not, we tri
 
 \[f_i=\exp\Big(\frac{-‖x-l_i ‖}{2\sigma^2 }\Big)\]
 
-SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$ \cite {larochelle2007empirical}. Gaussian kernel SVM results for different sigma and C is shown in table 1.
+SVM classifier with gaussian kernel is tested with σ ranging from $10^-7$ to $1$ and C = 0.1 to $10^5$ \cite {larochelle2007empirical}. Gaussian kernel SVM results for different sigma and C is shown in table 1. 
 \\
 \\
 \begin{tabular}{|c|c|c|c|}
