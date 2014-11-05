@@ -69,6 +69,34 @@ Ideally the number of bins $B$ would be extremely large so that pixels would be 
 \label{bins}
 \end{figure}
 \subsection{Neural Network}
+In the second part, we implemented a fully connected feedforward neural network, trained by back-propagation (abbreviated as “BPNN” in the following content). This part is programmed using python 2.7.8 with the Numpy extension. Numpy is a fundamental package for scientific computing with python, and is especially powerful at matrix calculations and transformation\cite{numpy}.
+
+We used the raw image as our input data with no preprocessing as it showed to be ineffective with the other algorithms.
+
+As the output result of an active (sigmoid function) is in the interval [0,1], we normalize the training output also to this interval.
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{./image.png}
+\caption{A prototypical Feed Forward Neural Network.}
+\end{figure}
+To implement the BPNN we first generated random weights for each of links between input layer, hidden layer and output layers. Next, we calculated the inner product of weights and input and put the result through the sigmoid function. This is the Feed Forward step. After we got the result from output layer, we compare it with the given training outputs. The difference between the two results is then used to adjust the weights during the backpropagation to hidden layer---output layer and input layer---hidden layer sequentially.
+
+We runs the program until the error converges. Note that since we are starting with a random set of weight and threshold, it may take a series of trails to make the error converge to the desired value.
+
+In order to find the optimal value from the number of neuron in the hidden layer and learning rate we used 5 fold cross-validation. The results of our validation step can be seen below. 
+\\
+\\
+\begin{tabular}{|c|c|c|c|}
+\hline
+ \# Neurons $\diagdown$ LR & 0.3 & 0.5 & 0.8 \\ \hline
+ 8 & 17.75\% &  16.95\% & 13.38\% \\
+ 30 & 22.28\% & 25.24\% & 21.75\% \\
+ 50 & 21.67\% & 23.72\% & 21.53\% \\ \hline
+\end{tabular}
+
+From the above result, we can see that the learning rate and neuron numbers will significantly effect the networks performance.  From our simulation, it is observed that 30 hidden layer nods and learning rate=0.5 gives the best performance.
+
+Theoretically, having too many hidden neurons will cause the network to over fit and therefore ibe incapable of generalization. In contrast, having too few neurons will make the system not described adequately. Also, the system will be less robust to damage.
+
 \subsection{Support Vector Machine}
 Support vector machines (SVMs) have shown to been a promising tool for data classification. The basic idea behind SVMs is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
 
@@ -119,9 +147,10 @@ Table 2. Linear \& Gaussian kernel SVM result
 
 \subsection{Convolutional Neural Network}
 While Convolutional Neural Networks (CNNs) have been around for many years it is only recently that they have become computational feasible to train. Using Graphics Processing Units (GPUs) researchers from the University of Toronto showed that not only can CNNs be made feasible to train but that they can also outperform many other state of the art image recognition methods\cite{imagenet}.
-Convolution Neural Networks take inspiration from nature. In the 1960's Hubel \& Weisel conducted a wealth research on cats and monkeys in order to try to understand the biological vision systems of the brain. Their research showed that the vision system consisted of a number of `receptive fields' which were layered on top each other. They also showed that vision at least in the first steps of the vision system where highly localized. Convolutional Neural use this notion of locality when building their neurons. Where as Fully Connected NNs accept inputs from all other neurons CNNs attempt to model the biological vision system by taking locality into account in the first layers of the network. The locals layers are then feed into a FNN at the end of the network to compute the final output. This has allowed CNNs to achieve remarkably good results in the area of image recognition. 
+
+The structure of Convolution Neural Networks is inspired by the mammalian visual system. During the 1970's Hubel \& Weisel conducted a vast amount research on cats and monkeys in order to try to understand the biological vision systems of the brain\cite{hubel}. Their research showed that vision system, at least in the few first layers, was highly localized. This meant that neurons in higher layers of the visual system only accepted inputs from groups neurons with were receiving their input from the same area in the visual field. Convolutional Neural use this notion of locality when building their neurons. Where as Fully Connected NNs accept inputs from all other neurons CNNs attempt to model the biological vision system by taking locality into account in the first layers of the network. The locals layers are then feed into a Fully Connected NN at the end of the network to compute the final output. This has allowed CNNs to achieve remarkably good results in the area of image recognition since spacial locality is extremely important.
 \subsubsection{Methodology}
-In order to build our CNN we used the Caffe CNN framework\cite{jia2014caffe}. Caffe allows one to create a CNN using Google Protocol Buffers, a structured data definition language similar to XML and JSON, to define the structure of the network including convolution, pooling, and fully connected layers as well as output layers such as loss, argmax, and accuracy. Using Caffe one simply has to define the network no coding required. Caffe then then compiles this definition file and builds the network from it.
+In order to build our CNN we used the Caffe CNN framework\cite{jia2014caffe}. Caffe allows one to create a CNN using Google Protocol Buffers, a structured data definition language similar to XML and JSON. User can define the structure of the network including data input layers, convolution, pooling, and fully connected layers as well as output layers such as loss, argmax, and accuracy. Using Caffe one simply has to define the network no coding required. Caffe then compiles this definition file and builds the network from it.
 
 We based our final network off of the LeNet architecture \cite{lecun-01a}. This architecture was recommend by the MNIST tutorial provided on Caffe website. Since our dataset is very similar to the MNIST dataset we believed this would be a good place to start. 
 
@@ -131,6 +160,7 @@ Using the LeNet architecture as a our starting point we managed achieved achieve
 
 Adding a fourth layer posed a slight problem as each convolutional and pooling layer reduces the size original input of $48 \times 48$. In fact the output of the 3 layer network using 5,5,5 for kernels was a single scalar value. Because of this a fourth layer could not added using this scheme. In order to remedy this we had to reduce the kernel size, and therefore the rate of input size reduction in the proceeding layers. In the end the 4 layer network used 5,5,3,3 for its kernel sizes. Unfortunately the 4 layer network proved to be significantly worse than the 3 layer network, only scoring in the 75\% range. Because of this, and the fact that the extra layer increased the training time, we choose no to train any additional 4 layer networks.
 
+A visualization of our final network can be viewed in the appendix.
 \begin{figure}
 \includegraphics[trim=500 50 200 50,clip=true,width=0.5\textwidth]{./confusion.png}
 \caption{Confusion Matrix for CNN. When training on all of the training data this network scored 92.6\% on the public Kaggle test set.}
@@ -139,13 +169,29 @@ Adding a fourth layer posed a slight problem as each convolutional and pooling l
 In order to train our network we used a single nVidia GTX 860m GPU with 2GB of memory. This allowed us to train and validate our networks to convergence in roughly 30 minutes. This allowed us to easily tune parameters and add or remove layers from the network in order to see their effect on the test score. We found that 10000 iterations was sufficient for the network to converge. In fact more iterations usually caused the networks performance to decrease slightly. For example 20000 iterations caused a reduction of $\sim 0.5\%$ on the public Kaggle test set. 
 
 \section{Discussion}
-SVM linear kernel is not giving satisfactory results neither for raw features nor for PHOG features. It is evident that separating this dataset using linear decision boundary (either Naive bayes or Linear SVM) will result accuracy around 40\%. Even gaussian (rbf) kernel is not very efficient. We concluded that linear SVM is not an state of art algorithm for this kind of problem.
+We found that Naive Bayes did much better than expected. Naive Bayes' assumption that features are conditionally independent give then class is clearly a very bad assumption to make for image data since spatial locality of the data is very important. Naive Bayes independence assumption basically throws away this locality information. Regardless it was able to perform just as well as other algorithms such as SVM which usually preform better on other problems. 
+
+BP neural networks have many advantages. First of all, BP neural networks can realized the mapping from input to outputs. Because of this strong non-linear mapping characteristic, BP is extremely suitable for solving problems with complex mechanisms. In other words, BP neural networks can be used even if users does not understand the solution. In contrast to many other traditional techniques, users must understand the inputs, the algorithms, and the outputs in great detail, to make the implementation work.
+
+Secondly during the training process BP network will automatically learn to retrieve the `inner connection' between inputs and outputs, and apply this to learning the weights. Therefore, BP networks are highly self-learning and adaptive.
+
+However, BP neural network also has some critical disadvantages. One of the most critical shortcomings for BP neural network is the “local minimum” issue. The traditional BPNN is an optimization to local search, and it solves complex non-linear by tweaking the weights gradually. However, this approach may bring the algorithm to a local minimum, and eventually leads to training failure. In addition to this BPNN is very sensitive to initial network weights. Initializing the network with different starting weight may greatly affect the convergence of BPNN. This is also the reason why different trials may give different convergence result.
+
+Another disadvantage of BPNN is that it can take a large number of iterations to converge to the desired solution\cite{regression}. As BPNN uses gradient descent to explore a complex function, “serrated plot” is likely to happen during in this process. Therefore, BPNN is relatively low in computational efficiency. One potential solution to this is PNN\cite{prob}\cite{nn}.
+
+Support Vector Machines using a linear kernel does clearly not give satisfactory results for raw features or PHOG features. It is evident that separating this dataset using linear decision boundary (either Naive bayes or Linear SVM) will result accuracy around 40\%. Even using Gaussian (RBF) kernel is not very effective. Because of this we concluded that SVM is not a suitable algorithm for image classification.
+
+Convolutional Neural networks are the clear winner when it comes to image recognition. When coupled with GPUs this method is significantly better then all the other methods we explored. Since their introduction in 2012 nearly all teams competing in the ImageNet competition have switched to using CNNs and GPU training or some slight variation \cite{nvidia}.
 
 \bibliographystyle{unsrt}
 \bibliography{biblio.bib}
 \section*{Appendix}
-\begin{figure}
+\begin{figure*}
 \includegraphics[scale=0.30]{./nn.png}
 \caption{Visualization of our Convolutional Neural Network.}
-\end{figure}
+\end{figure*}
+
+\begin{figure*}
+\includegraphics[trim=100 50 100 50,clip=true,scale=0.3]{./loss.png}
+\end{figure*}
 \end{document}
