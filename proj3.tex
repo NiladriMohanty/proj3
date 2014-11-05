@@ -8,13 +8,13 @@
 \newcommand{\argmax}{\operatornamewithlimits{argmax}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 
-\title{Handwritten Digit Classification}
+\title{Handwritten Digit Classification on Textured Backgrounds}
 \author{Ian Forbes, Xinchi Chen, Niladri Mohanty\\ Team: Mr. Pinks}
 \begin{document}
 \twocolumn[
 \maketitle
 \section{abstract}
-We attempt to classify images of handwritten digits written on various textured backgrounds. Using a training set of 50000 images we evaluate the performance of several popular machine learning algorithms. 
+We attempt to classify images of handwritten digits written on various textured backgrounds. Using a training set of 50000 $48 \times 48$ images we evaluate the performance of several popular machine learning algorithms including Naive Bayes, Fully Connected Feed Forward Neural networks, Support Vector Machines, and Convolutional Neural networks.
 \\
 \\
 ]
@@ -25,17 +25,16 @@ A fast and effective character recognition system required to solve the handwrit
 
 For improving the performance in recognition problems, image is divided into local regions \cite {lazebnik2006beyond}. This method is known as image zoning and highly successful in computer vision field\cite {ciresan2012multi}.
 
-Recently Convolutional Neural Networks have given the best accuracy (99.73\%) on the MNIST dataset. Ciseran et al. expanded the training and testing database, including elastic distortions. Studies proved that negligence of distortion results into low accuracy rates \cite {gil2014handwritten}. Also, it is proved that classifiers which use only digit characteristics not the full image perform poorly.
-
+Recently Convolutional Neural Networks have given the best accuracy (99.73\%) on the MNIST dataset. Ciseran et al. expanded the training and testing dataset to including elastic distortions. Research have proven that negligence of distortion results into low accuracy rates \cite {gil2014handwritten}.
 \section{Preprocessing}
 We tried many different preprocessing methods in attempt to reduce image noise, sharpen the appearance of the target digit, and most importantly improve our algorithms' accuracy. The first and most basic of theses methods was to normalize all of the images to a $[0,1]$ scale. The reason for this decision was that while browsing through the images we noticed that many were mostly gray with very little black or white. We believed that by normalizing the images there would be more contrast between the digit and the background which would make it easier to identify the digit. While normalization proved promising in validation, increasing our validation accuracy by roughly 1\%, our actual Kaggle submissions scored lower than the un-normalized submission.
 
-Another basic method to reduce noise from any signal is to average it across many samples.  We tried to average all images for the same class to get rid of noise. However as the noise (texture) is random, we found it was not a great way to reduce the noise.
+Another basic method to reduce noise from a signal is to average it across many samples.  We tried to average all images from the same class to get rid of noise. However as the noise (texture) is random, we found it was not a successful way to reduce the noise.
 
 Another method we tried was image sharpening. Image sharpening works by subtracting a blurred copy of the image from a weighted version of the original image. The final sharpened image in our case was create by the formula: \[\text{sharpened} = 1.5 \cdot \text{original} - 0.5 \cdot \text{blurred}\]
 Unfortunately this method showed no improvement over the non-sharpened images.
 
-We also tried edge detection via the Laplacian operator $\Delta f$ (shown below) which is the sum of the second derivatives. In order to calculate the the Laplacian the original image is convolved with the image filter (kernel)  below.
+We also tried edge detection via the Laplacian operator $\Delta f$ (shown below left) which is the sum of the second derivatives. In order to calculate the the Laplacian the original image is convolved with the image filter (kernel)  below (right).
 \[\Delta f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}
 \qquad
 \begin{bmatrix}
@@ -46,18 +45,20 @@ We also tried edge detection via the Laplacian operator $\Delta f$ (shown below)
 \]
 This operation finds areas of the image where image intensity changes rapidly. The intuition being that fast changes in image intensity indicate edges. The problem with this approach however is that the image data becomes very sparse as the majority of the images tends to zero since there is little variation in much of the image. In order to remedy this we attempted to dilate the edges by one pixel. While this worked for images with smooth backgrounds it often caused those with noisy or rough backgrounds to become completely white since the background texture was also dilated. This method therefore reduced the performance of our algorithms.
 
-In additional to applying various image filters we also attempted to increase the amount amount of data available us by adding rotated copies of the original data to our dataset. Since the digits from the original test were rotated at random we believed this would increase the amount to useable data and therefore are test results.
+In additional to applying various image filters we also attempted to increase the amount amount of data available us by adding rotated copies of the original data to our dataset. Since the digits from the original test were rotated at random we believed this would increase the amount to usable data and therefore our test results. This proved to not be an effective methods as it significantly reduced performance.
 
 The Median filter can also be used to filter the noise. Again, it did not yield any considerable differences than raw images. Therefore, we did not focused on this technique of preprocessing.
+
+After trying these various methods we found that the raw image data performed the best.
 \section{Feature Selection}
 For the majority of our algorithms we used the raw pixel values. However we also tried some  more complex methods to extract features from the image data.
 
-Blockwise histograms of local orientations is used to recognize objects\cite{Maji09fastand}. This is called Pyramid Histogram of Oriented Gradients (PHOG). Each pixel in the image is assigned an orientation and magnitude based on the local gradient. Following this histograms are constructed by aggregating the pixel responses within cells of various sizes. The grayscale input image is convolved with filters which respond to horizontal and vertical gradients from which the magnitude and orientation is computed. The orientation could be signed (0−360) or unsigned (0−180). The signed gradient distinguishes between black to white and white to black transitions which might be useful for digits. PHOG features are tested with Support Vector Machine (SVM) linear and Gaussian kernel. 
+Blockwise histograms of local orientations is one method of feature selection that can be used to recognize objects\cite{Maji09fastand}. This is called Pyramid Histogram of Oriented Gradients (PHOG). Each pixel in the image is assigned an orientation and magnitude based on the local gradient. Following this histograms are constructed by aggregating the pixel responses within cells of various sizes. The grayscale input image is then convolved with filters which respond to horizontal and vertical gradients from which the magnitude and orientation is computed. The orientation could be signed (0-360) or unsigned (0-180). The signed gradient distinguishes between black to white and white to black transitions which might be useful for digits. PHOG features are discussed further in  section 5.3.
 \section{Algorithms}
 \subsection{Naive Bayes}
 Naive Bayes is a basic machine learning algorithm based on Bayes rule that can be used for multiclass classification. It uses Bayes rule along with the assumption that all features are conditionally independent given the class. The decision rule for Bayes rule is given by:
 \[ \argmax_c \Pr(C = c) \prod_{i=0}^{n} \Pr(F_i = f_i | C = c)\]
-We used a variant of Naive Bayes called Multinomial Naive Bayes. This method creates a Multinomial probability distribution for each feature given the class. Mathematically speaking we estimate the distribution $\Pr(F_i = f_i | C = c)$ over each of the features $f \in F$ and each class $ c \in C$ using our training data. Then we use the decision rule to find the class $c$ which maximizes this probability when classifying a test example.
+We used a variant of Naive Bayes called Multinomial Naive Bayes. This method creates a Multinomial probability distribution for each of the features given the class. Mathematically speaking we estimate the distribution $\Pr(F_i = f_i | C = c)$ over each of the features $f \in F$ give the class equals $c$ using our training data. Then we use the decision rule to find the class $c$ which maximizes this probability when classifying a test example.
 
 In order to model the probability distributions of $\Pr(F_i = f_i | C = c)$ as a multinomial distributions we needed to discretize the the continuous $[0,1]$ values present in the images to integer values. In order to do this we created a histogram with $B$ bins where intervals of size $1/B$ from $[0,1]$ were mapped to each bin. For example in the case where $B = 2$, pixels with intensity in the range $[0,0.5]$ would be mapped into bin 1 whereas pixels with intensity in $(0,5,1.0]$ would be mapped to bin 2. This essentially binarizes the image.
 
@@ -69,15 +70,15 @@ Ideally the number of bins $B$ would be extremely large so that pixels would be 
 \end{figure}
 \subsection{Neural Network}
 \subsection{Support Vector Machine}
-Support vector machines (SVMs) have been a promising tool for data classification. Its basic idea is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
+Support vector machines (SVMs) have shown to been a promising tool for data classification. The basic idea behind SVMs is to map data into a high dimensional space and find a separating hyperplane with the maximal margin.
 
-We already discussed different feature selection strategies. Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Linear SVM validation accuracy for PHOG features is 14.63% and test dataset accuracy is 10.54%.
+A Combination of features and SVM is used to classify using SVM classifier \cite {chen2006combining}. In all cases, model selection was performed using a validation set. Linear SVM is used to classify test dataset. One vs all classification approach is used for multi class SVM classification. Linear SVM validation accuracy for PHOG features is 14.63\% and test dataset accuracy is 10.54\%.
 
-Linear SVM fails to classify test dataset by PHOG features. It can be inferred that PHOG features can not be used to classify data by linear separation.
+Linear SVM fails to classify test dataset by PHOG features. It can be inferred that PHOG features can not be used to classify data using linear separation.
 SVM can also perform efficiently for datasets which are not linearly separated. For non-linear classification, it computes a new feature for every given example depending on proximity to landmarks. It is important to note that these landmarks are chosen to be equal to $x_i, i=1,…,m$. Given $x$, the new features are computed as-
 \[f_i=\text{similarity}(x_i,l_i)\]
  
-To test whether SVM is a good classifier for this kind of problem or not, we tried SVM with gaussian kernel. The gaussian kernel function is given below:
+To test whether SVM is a good classifier for this kind of problem or not, we tried SVM with Gaussian kernel. The Gaussian kernel function is given below:
 
 \[f_i=\exp\Big(\frac{-‖x-l_i ‖}{2\sigma^2 }\Big)\]
 
@@ -126,18 +127,20 @@ We based our final network off of the LeNet architecture \cite{lecun-01a}. This 
 
 In order to train and validate the performance of our network we segmented the dataset into 5 parts. We used the first 4 segments (40000 images) to train network and the last segment (10000 images) to validate it. We did not perform cross validation as the cost of train the network was quite high. 
 \subsubsection{Network Architecture}
-Using the MNIST architecture as a our starting point we managed achieved achieve 86.7\% accuracy on the public Kaggle test set. By adding an additional convolutional and pooling layer we managed to increase this to 91.5\%. Next we increased the initial learning rate from 0.1 to 0.5 (a learning rate of 1 lead to NaN errors) in hopes that the previous network had fallen into a local minimum. After increasing the initial learning rate to 0.5 we scored 92.1\%. 
+Using the LeNet architecture as a our starting point we managed achieved achieve 86.7\% accuracy on the public Kaggle test set. By adding an additional convolutional and pooling layer we managed to increase this to 91.5\%. Next we increased the initial learning rate from 0.1 to 0.5 (a learning rate of 1 lead to NaN errors) in hopes that the previous network had fallen into a local minimum. After increasing the initial learning rate to 0.5 we scored 92.1\%. 
 
-Adding a fourth layer posed a slight problem as each convolutional and pooling layer reduced the size original input of $48 \times 48$. In fact the output of the 3 layer network using 5,5,5 for kernels was a single scalar value. Because of this a fourth layer could not added using this scheme. In order to remedy this we had to reduce the kernel size, and therefore the rate of input size reduction in the proceeding layers. In the end the 4 layer network used 5,5,3,3 for its kernel sizes. Unfortunately the 4 layer network proved to be significantly worse than the 3 layer network, only scoring in the 75\% range. Because of this, and the fact that the extra layer increased the training time, we choose no to train any additional 4 layer networks.
+Adding a fourth layer posed a slight problem as each convolutional and pooling layer reduces the size original input of $48 \times 48$. In fact the output of the 3 layer network using 5,5,5 for kernels was a single scalar value. Because of this a fourth layer could not added using this scheme. In order to remedy this we had to reduce the kernel size, and therefore the rate of input size reduction in the proceeding layers. In the end the 4 layer network used 5,5,3,3 for its kernel sizes. Unfortunately the 4 layer network proved to be significantly worse than the 3 layer network, only scoring in the 75\% range. Because of this, and the fact that the extra layer increased the training time, we choose no to train any additional 4 layer networks.
+
 \begin{figure}
 \includegraphics[trim=500 50 200 50,clip=true,width=0.5\textwidth]{./confusion.png}
-\caption{Confusion Matrix for CNN.}
+\caption{Confusion Matrix for CNN. When training on all of the training data this network scored 92.6\% on the public Kaggle test set.}
 \end{figure}
 \subsubsection{GPU Training}
 In order to train our network we used a single nVidia GTX 860m GPU with 2GB of memory. This allowed us to train and validate our networks to convergence in roughly 30 minutes. This allowed us to easily tune parameters and add or remove layers from the network in order to see their effect on the test score. We found that 10000 iterations was sufficient for the network to converge. In fact more iterations usually caused the networks performance to decrease slightly. For example 20000 iterations caused a reduction of $\sim 0.5\%$ on the public Kaggle test set. 
 
 \section{Discussion}
 SVM linear kernel is not giving satisfactory results neither for raw features nor for PHOG features. It is evident that separating this dataset using linear decision boundary (either Naive bayes or Linear SVM) will result accuracy around 40\%. Even gaussian (rbf) kernel is not very efficient. We concluded that linear SVM is not an state of art algorithm for this kind of problem.
+
 \bibliographystyle{unsrt}
 \bibliography{biblio.bib}
 \section*{Appendix}
